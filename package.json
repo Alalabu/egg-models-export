@@ -1,6 +1,6 @@
 {
   "name": "egg-models-export",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Use to export the remote sequelize models.",
   "eggPlugin": {
     "name": "modelsExport"
@@ -39,19 +39,20 @@
   },
   "files": [
     "config",
-    "app"
+    "app",
+    "app.js"
   ],
   "ci": {
     "version": "8, 10"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-models-export.git"
+    "url": "git+https://github.com/Alalabu/egg-models-export.git"
   },
   "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
+    "url": "https://github.com/Alalabu/egg-models-export/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-models-export#readme",
+  "homepage": "https://github.com/Alalabu/egg-models-export#readme",
   "author": "BaiHaiou",
   "license": "MIT"
 }

@@ -66,21 +66,24 @@ const loadModelAttributes = (model, tableName) => {
 }
 
 module.exports = options => {
-  return async function modelsFilter(ctx, next) {
+  // console.log(`插件 [egg-models-export] 01 进入中间件加载...`);
+  return async function(ctx, next) {
+    // console.log(`插件 [egg-models-export] 02 进入中间件执行...`);
     /**
      * 在中间件中处理到达的 [用于获取model数据] 请求
-     * 1. [model/in]: 用于获取当前模型中所有的数据表
-     * 2. [model/attrs]: 根据每一张数据表(或可选),获取表属性<及关联关系>
+     * 1. [models/in]: 用于获取当前模型中所有的数据表
+     * 2. [models/attrs]: 根据每一张数据表(或可选),获取表属性<及关联关系>
      */
-    const { url } = ctx.request;
-    const { api } = ctx.app.config.modelsExport;
-    console.log(`插件 [egg-models-export] 请求API: ${url}`);
     try {
+      const { url } = ctx.request;
+      const { api } = ctx.app.config.modelsExport;
+      // console.log(`插件 [egg-models-export] 请求API: ${url}`);
       if(url === api.tables){
         const { model } = ctx;
-        console.log('ctx -> model -> ', model);
+        // console.log('ctx -> model -> ', model);
         ctx.body = loadModelTables(model);
       }else if(url === api.attrs){
+        // console.log('ctx.request.body -----> ', ctx);
         const {tableName} = ctx.request.body;
         const { model } = ctx;
         ctx.body = loadModelAttributes(model, tableName);

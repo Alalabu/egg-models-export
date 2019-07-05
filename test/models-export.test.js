@@ -14,9 +14,13 @@ describe('test/models-export.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
 
-  it('should GET /', () => {
+  it('should POST /', () => {
     return app.httpRequest()
-      .get('/models/in')
+      .post('/models/attrs')
+      .send({
+        tableName: 'address',
+      })
+      .set({ aaa: 'cbc' })
       // .expect('hi, modelsExport')
       // .expect(200)
       .then(res => {
