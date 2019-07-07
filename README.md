@@ -100,6 +100,48 @@ module.exports = appInfo => {
 - 在 `egg-models-export` 项目中需要编辑 `model` 文件，编辑模型属性及关联关系等，启动项目即可。
 ![](https://sheu-huabei5.oss-cn-huhehaote.aliyuncs.com/bho/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20190705192841.png)
 
+### 鉴权
+> 1.0.5 新增： **数据模型核心**可以配置每个**分支项目**的访问权限，及可访问的 `table` 组。
+
+```javascript
+// config/config.{dev}.js
+'use strict';
+
+module.exports = appInfo => {
+  /**
+   * built-in config
+   * @type {Egg.EggAppConfig}
+   **/
+  const config = {};
+
+  config.modelsExport = {
+	// auth 默认为空，如果配置，则表明核心对外部访问需要鉴权
+    auth: [{
+        key: 'project-1',
+        secret: '7825dfc0-4c82-11e9-81c9-73dbcff02a31',
+        ignore: [],
+        contains: [ 'address', 'client' ],
+      }, {
+        key: 'project-2',
+        secret: '68b5dfc0-4c82-11e9-81c9-73dbcff02bd1',
+        ignore: [ 'client', 'province' ],
+    },],
+  };
+
+  return {
+    ...config,
+  };
+};
+```
+属性 | 类型 | 描述
+---  | --- | --------
+auth | Array<role> | [ 非必要，一旦配置则启用鉴权 ] 权限数组，每一个元素都表示一个访问角色
+role | Object | 权限数组中的元素 (由项目设计者约定分配)
+key | String | 访问角色的 KEY 
+secret | String | 访问角色的 SECRET
+ignore | Array<String> | [ 非必要 ] 忽略的数据表，配置的所有表将不会被访问者获取
+contains | Array<String> | [ 非必要 ] 仅能访问的数据表，优先级大于 `ignore` ，若与 `ignore` 同时存在则仅仅 `contains` 有效。
+
 ## 提问交流
 
 请到 [egg issues](https://github.com/eggjs/egg/issues) 异步交流。

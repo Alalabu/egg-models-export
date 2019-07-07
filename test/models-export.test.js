@@ -18,13 +18,14 @@ describe('test/models-export.test.js', () => {
     return app.httpRequest()
       .post('/models/attrs')
       .send({
-        tableName: 'address',
+        tableName: 'client',
+        authKey: 'xiaofei',
+        authSecret: '68b5dfc0-4c82-11e9-81c9-73dbcff02bd1',
       })
-      .set({ aaa: 'cbc' })
       // .expect('hi, modelsExport')
       // .expect(200)
       .then(res => {
-        console.log('/ 请求结果: ', res.text);
+        console.log('/ 请求结果: ', res.body);
       });
   });
 });

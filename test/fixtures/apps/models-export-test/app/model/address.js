@@ -12,28 +12,13 @@ module.exports = app => {
     school_id: {
       type: DataTypes.INTEGER,
     },
-    dorm_id: {
-      type: DataTypes.STRING,
-    },
     floor: {
       type: DataTypes.INTEGER,
-    },
-    dorm_no: {
-      type: DataTypes.INTEGER,
-    },
-    author_id: {
-      type: DataTypes.STRING,
-    },
-    realname: {
-      type: DataTypes.STRING,
     },
     gender: {
       type: DataTypes.INTEGER,
     },
     mobile: {
-      type: DataTypes.STRING,
-    },
-    school_area: {
       type: DataTypes.STRING,
     },
     detail: {
@@ -55,7 +40,7 @@ module.exports = app => {
   });
 
   Address.associate = () => {
-    Address.belongsTo(app.model.Dormitory, { foreignKey: 'dorm_id', targetKey: 'id' });
+    Address.belongsTo(app.model.School, { foreignKey: 'school_id', targetKey: 'sid' });
   };
 
   return Address;

@@ -9,4 +9,10 @@ module.exports = app => {
   // console.log('coreMiddleware --> ', coreMiddleware);
   app.config.coreMiddleware = coreMiddleware;
   // app.config.coreMiddleware.unshift('modelsFilter');
+
+  app.beforeStart(async () => {
+    // 此处是你原来的逻辑代码
+    console.log('app.beforeStart...');
+    // app.test01 = 'test001';
+  });
 };

@@ -3,24 +3,25 @@
 module.exports = app => {
   const DataTypes = app.Sequelize;
 
-  const Dormitory = app.model.define('dormitory', {
+  const City = app.model.define('city', {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    drom_name: {
+    code: {
       type: DataTypes.STRING,
     },
-    drom_num: {
-      type: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING,
     },
-    school_id: {
-      type: DataTypes.INTEGER,
+    provincecode: {
+      type: DataTypes.STRING,
     },
   }, {
-    tableName: 'dormitory',
+    tableName: 'city',
     timestamps: false,
   });
 
-  return Dormitory;
+  return City;
 };
+
