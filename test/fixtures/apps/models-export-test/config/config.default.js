@@ -17,7 +17,7 @@ module.exports = () => {
 
     host: '127.0.0.1',
     port: 53306,
-    database: 'luv_db',
+    database: 'yourdb',
     username: 'root',
     password: 'root',
 

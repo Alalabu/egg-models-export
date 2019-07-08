@@ -51,17 +51,18 @@ Description here.
 
 ### 依赖的插件
 
-- egg-sequelize：`^4.3.1`
+- ~~egg-sequelize：`^4.3.1` (1.0.5前)~~
+- egg-sequelize：`^5.1.0` (1.0.6+)
 - mysql2：`^1.6.5`
 - moment：`^2.24.0`
 
-### 安装
+### 1. 安装
 
 ```bash
 $ npm i egg-models-export --save
 ```
 
-### 开启插件
+### 2. 开启插件
 
 ```js
 // config/plugin.js
@@ -71,7 +72,7 @@ exports.modelsExport = {
 };
 ```
 
-### 配置插件
+### 3. 配置插件
 ```javascript
 // config/config.{dev}.js
 'use strict';
@@ -96,11 +97,13 @@ module.exports = appInfo => {
   };
 };
 ```
-### 模型设置
+### 4. 模型设置
 - 在 `egg-models-export` 项目中需要编辑 `model` 文件，编辑模型属性及关联关系等，启动项目即可。
 ![](https://sheu-huabei5.oss-cn-huhehaote.aliyuncs.com/bho/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20190705192841.png)
 
-### 鉴权
+> 简单模式下（不需要使用鉴权及多数据库模式），配置到这一步即可。此时通过 `npm start` 启动**数据核心**项目，安装了 `egg-models-import` 插件的项目便可以接入缓存数据了。
+
+### 5. 鉴权
 > 1.0.5 新增： **数据模型核心**可以配置每个**分支项目**的访问权限，及可访问的 `table` 组。
 
 ```javascript
@@ -141,6 +144,63 @@ key | String | 访问角色的 KEY
 secret | String | 访问角色的 SECRET
 ignore | Array<String> | [ 非必要 ] 忽略的数据表，配置的所有表将不会被访问者获取
 contains | Array<String> | [ 非必要 ] 仅能访问的数据表，优先级大于 `ignore` ，若与 `ignore` 同时存在则仅仅 `contains` 有效。
+
+### 6. 多库支持
+> `1.0.6`版本：在特殊情况下，**数据核心**的管理者可能希望一个核心管理多个数据库，并为其他**分支项目**分配不同的数据模型支持。
+
+#### 6.1 egg-sequelize 配置
+通过配置 `datasources` 数组，可以为**数据核心**挂载多个数据库模型。
+```javascript
+// config/config.default.js
+config.sequelize = {
+  datasources: [
+    {
+      delegate: 'model_01', // load all models to app.model and ctx.model
+      baseDir: 'model_01', // load models from `app/model/*.js`
+      database: 'biz',
+      // other sequelize configurations
+    },
+    {
+      delegate: 'model_02', // load all models to app.adminModel and ctx.adminModel
+      baseDir: 'model_02', // load models from `app/admin_model/*.js`
+      database: 'admin',
+      // other sequelize configurations
+    },
+  ],
+};
+```
+#### 6.2 modelsExport 配置
+多数据库状态下，必须配置 `auth` 鉴权，并且每一个**角色**都必须配置 `delegate` ，与 `sequelize` 中的 `delegate` 需一以应对。
+```javascript
+// config/config.default.js
+config.modelsExport = {
+  // auth 默认为空，如果配置，则表明核心对外部访问需要鉴权
+  auth: [{
+      key: 'project-1',
+      secret: '7825dfc0-4c82-11e9-81c9-73dbcff02a31',
+	  delegate: 'model_01', // 多库必须配置 delegate
+      ignore: [],
+      contains: [ 'address', 'client' ],
+    }, {
+      key: 'project-2',
+      secret: '68b5dfc0-4c82-11e9-81c9-73dbcff02bd1',
+	  delegate: 'model_02', // 多库必须配置 delegate
+      ignore: [ 'client', 'province' ],
+  },],
+};
+```
+#### 6.3 多库数据模型
+路径需与配置一一应对，将数据模型文件放置于相应的**模型路径**之中，即可分别动态加载。
+![](https://sheu-huabei5.oss-cn-huhehaote.aliyuncs.com/bho/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20190708181541.png)
+
+## 历史版本
+> `1.0.6` ：
+> 1. 新增 对**数据核心**多库的支持；
+> 2. 变更 `egg-sequelize` 的支持版本从 `4.3.1` 到 `5.1.0`;
+> 
+> `1.0.5` ：
+> 1. 新增 鉴权功能，通过配置鉴权数组，可限制访问者无法访问 `ignore`（忽略列表），或限制访问者只能访问 `contains`（仅可访问列表）;
+> 2. 修复 其他问题;
 
 ## 提问交流
 

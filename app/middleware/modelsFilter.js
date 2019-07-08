@@ -2,9 +2,6 @@
 const sequelize = require('sequelize');
 
 const parseDataTypes = typeVal => {
-  // console.log(`typeVal type -> ${typeVal} String : `, Object.prototype.toString.call(typeVal));
-  // console.log(`typeVal type -> ${typeVal} typeof : `, typeof typeVal);
-  console.log(`typeVal type -> ${typeVal} toString : `, typeVal.toString());
   if (typeVal.toString().indexOf('VARCHAR') === 0) return 'STRING';
   if (typeVal.toString() === 'INTEGER') return 'INTEGER';
   if (typeVal.toString() === 'DATETIME') return 'DATE';
@@ -63,11 +60,8 @@ const loadModelAttributes = (model, tableName, auth) => {
   }
   // 开始整理数据关系
   const models = model.models;
-  // console.log('models => ', models);
   const target_model = models[tableName];
-  // console.log(`target_model[${tableName}] => `, models[tableName]);
-  const target_model_attrs = target_model.attributes;
-  // console.log('target_model_attrs => ', target_model_attrs);
+  const target_model_attrs = target_model.attributes || target_model.tableAttributes;
   // 整理关联关系
   const associations = [];
   if (target_model.associations) {
@@ -87,10 +81,7 @@ const loadModelAttributes = (model, tableName, auth) => {
   // 整理模型属性
   const target_model_res = Object.keys(target_model_attrs).map(attrKey => {
     const attrValue = target_model_attrs[attrKey];
-    // console.log(`target_model_attrs[${attrKey}] => `, attrValue);
     const { primaryKey, type, defaultValue } = attrValue;
-    // console.log('type => ', type);
-    // console.log('parseType => ', parseDataTypes(type));
     return {
       name: attrKey,
       primaryKey,
@@ -111,8 +102,7 @@ const loadModelAttributes = (model, tableName, auth) => {
 module.exports = () => {
   // console.log(`插件 [egg-models-export] 01 进入中间件加载...`);
   return async function(ctx, next) {
-    console.log('插件 [egg-models-export] 02 进入中间件执行...', ctx.app);
-    console.log('插件 [egg-models-export] 03 test01 -> ', ctx.app.test01);
+    // console.log('插件 [egg-models-export] 02 进入中间件执行...', ctx.app);
     /**
      * 在中间件中处理到达的 [用于获取model数据] 请求
      * 1. [models/in]: 用于获取当前模型中所有的数据表
@@ -137,7 +127,7 @@ module.exports = () => {
         for (const user of auth) {
           if (user.key === authKey && user.secret === authSecret) {
             currentAuth = {
-              key: authKey, ignore: user.ignore, contains: user.contains,
+              key: authKey, ignore: user.ignore, contains: user.contains, delegate: user.delegate,
             };
             break;
           }
@@ -147,15 +137,12 @@ module.exports = () => {
           return ctx.body = { err: 'You do not have permission to access this resource.' };
         }
       }
-      // console.log(`插件 [egg-models-export] 请求API: ${url}`);
       if (url === api.tables) {
-        const { model } = ctx;
-        // console.log('ctx -> model -> ', model);
+        const model = ctx[currentAuth.delegate] || ctx.model;
         ctx.body = loadModelTables(model, currentAuth);
       } else if (url === api.attrs) {
-        // console.log('ctx.request.body -----> ', ctx);
         const { tableName } = ctx.request.body;
-        const { model } = ctx;
+        const model = ctx[currentAuth.delegate] || ctx.model;
         ctx.body = loadModelAttributes(model, tableName, currentAuth);
       } else {
         next();
