@@ -9,6 +9,7 @@ exports.modelsExport = {
   api: {
     tables: '/models/in',
     attrs: '/models/attrs',
+    version: '/models/v',
   },
   // auth: [
   //   {

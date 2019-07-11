@@ -1,6 +1,6 @@
 {
   "name": "egg-models-export",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "Use to export the remote sequelize models.",
   "eggPlugin": {
     "name": "modelsExport"
