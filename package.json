@@ -1,6 +1,6 @@
 {
   "name": "egg-models-export",
-  "version": "1.0.8",
+  "version": "1.0.81",
   "description": "Use to export the remote sequelize models.",
   "eggPlugin": {
     "name": "modelsExport"
@@ -29,7 +29,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
+    "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run egg-mdoels-export",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
     "lint": "eslint .",

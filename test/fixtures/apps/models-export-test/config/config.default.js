@@ -5,7 +5,7 @@ module.exports = () => {
   config.keys = '123456';
 
   // 中间件的执行内容，顺序从前置后
-  // config.middleware = [ 'modelsFilter' ];
+  config.middleware = [ 'modelsFilter' ];
 
   // config.modelsImport = {
   //   url: 'mysql://asdasdasd',

@@ -42,7 +42,7 @@ Description here.
 - 将数据模型文件部分做为独立项目运行，其他**关联项目**在启动时，异步访问**数据模型项目**，根据解析结果生成虚拟**sequelize models**。
 ![](https://sheu-huabei5.oss-cn-huhehaote.aliyuncs.com/bho/egg-models-xxx%2003.jpg)
 
-- 插件分为两部分：`egg-models-import` 和 `egg-models-export`。顾名思义，前者是**导入**行为，**关联项目**所需使用的，用于异步加载并生成数据模型缓存；后者是**导出**行为，**数据模型项目**所需的，用于对外提供远程接口，根据真实的数据模型，为**关联项目**提供模型解析方案。
+- 插件分为两部分：`egg-models-import` 和 `egg-models-export`。顾名思义，前者是**导入**行为，**关联项目**所需使用的，用于异步加载并生成数据模型缓存；后者是**导出**行为，**数据核心项目**所需的，用于对外提供远程接口，根据真实的数据模型，为**分支关联项目**提供模型解析方案。
 
 ## egg-models-import 配置
 请到 [egg-models-import](https://github.com/Alalabu/egg-models-import) 查看详细配置项说明。
@@ -63,12 +63,20 @@ $ npm i egg-models-export --save
 ```
 
 ### 2. 开启插件
+> 在 `egg-models-export` 中， `egg-sequelize` 是必要配置的插件。原因在于 `egg-models-export` 需要在启动时通过 `sequelize` 加载数据模型。
 
 ```js
 // config/plugin.js
-exports.modelsExport = {
-  enable: true,
-  package: 'egg-models-export',
+
+module.exports = {
+  sequelize: {
+    enable: true,
+    package: 'egg-sequelize',
+  },
+  modelsExport: {
+    enable: true,
+    package: 'egg-models-export',
+  }
 };
 ```
 
@@ -140,7 +148,7 @@ module.exports = appInfo => {
 ---  | --- | --------
 auth | Array<role> | [ 非必要，一旦配置则启用鉴权 ] 权限数组，每一个元素都表示一个访问角色
 role | Object | 权限数组中的元素 (由项目设计者约定分配)
-key | String | 访问角色的 KEY 
+key | String | 访问角色的 KEY , 多个 KEY 不可重复。
 secret | String | 访问角色的 SECRET
 ignore | Array<String> | [ 非必要 ] 忽略的数据表，配置的所有表将不会被访问者获取
 contains | Array<String> | [ 非必要 ] 仅能访问的数据表，优先级大于 `ignore` ，若与 `ignore` 同时存在则仅仅 `contains` 有效。

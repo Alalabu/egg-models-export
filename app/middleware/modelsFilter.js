@@ -101,9 +101,9 @@ const loadModelAttributes = (model, tableName, auth) => {
  * 中间件
  */
 module.exports = () => {
-  console.log('插件 [egg-models-export] 01 进入中间件加载...');
+  // console.log('插件 [egg-models-export] 01 进入中间件加载...');
   return async function(ctx, next) {
-    console.log('插件 [egg-models-export] 02 进入中间件执行...', ctx.app);
+    // console.log('插件 [egg-models-export] 02 进入中间件执行...', ctx.app);
     /**
      * 在中间件中处理到达的 [用于获取model数据] 请求
      * 1. [models/in]: 用于获取当前模型中所有的数据表
@@ -123,7 +123,7 @@ module.exports = () => {
       if (auth && Array.isArray(auth)) {
         if (!authKey || !authSecret) {
           // eslint-disable-next-line no-return-assign
-          return ctx.body = { err: 'key or secret not found!' };
+          return ctx.body = { err: '[egg-models-export] ERROR: key or secret not found!' };
         }
         // 权限获取
         for (const user of auth) {
@@ -141,20 +141,22 @@ module.exports = () => {
         }
         if (!currentAuth) {
           // eslint-disable-next-line no-return-assign
-          return ctx.body = { err: 'You do not have permission to access this resource.' };
+          return ctx.body = { err: '[egg-models-export] ERROR: You do not have permission to access this resource.' };
         }
       } else {
         // auth 配置无法检测,表示用户是为公开访问数据核心
         // 获取全局角色的热备版本
         dataVersion = version || dataVersion;
       }
+      // delegate model dir name
+      const delegate = currentAuth ? currentAuth.delegate || 'model' : 'model';
       // 解析 web api
       if (url === api.tables) {
-        const model = ctx[currentAuth.delegate] || ctx.model;
+        const model = ctx[delegate];
         ctx.body = loadModelTables(model, currentAuth, dataVersion);
       } else if (url === api.attrs) {
         const { tableName } = ctx.request.body;
-        const model = ctx[currentAuth.delegate] || ctx.model;
+        const model = ctx[delegate];
         ctx.body = loadModelAttributes(model, tableName, currentAuth);
       } else if (url === api.version) {
         // 获取当前数据热备版本(版本由用户自定义)
